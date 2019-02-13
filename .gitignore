@@ -3,3 +3,6 @@ decimator/*.obj
 *.dll
 *.exp
 *.lib
+src/*.obj
+lib/
+bin/
