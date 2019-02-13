@@ -3,6 +3,6 @@ decimator/*.obj
 *.dll
 *.exp
 *.lib
-src/*.obj
+src/phong/*.obj
 lib/
 bin/
