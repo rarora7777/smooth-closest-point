@@ -1,2 +1,5 @@
 *.exe
 decimator/*.obj
+*.dll
+*.exp
+*.lib
