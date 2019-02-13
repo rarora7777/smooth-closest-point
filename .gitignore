@@ -6,3 +6,4 @@ decimator/*.obj
 src/phong/*.obj
 lib/
 bin/
+*.asv
