@@ -34,14 +34,14 @@ class Phong
 public:
   typedef Eigen::Matrix<double, 2, 8> Basis;
   typedef Eigen::Matrix<ScalarType, 8, 1> Vector8;
-  typedef Eigen::Matrix<IndexType, 1,              Eigen::Dynamic> RowVectorXi;
+  typedef Eigen::Matrix<IndexType, 1, Eigen::Dynamic> RowVectorXi;
 
   
-  Phong();
+  __declspec(dllexport) Phong();
   
-  ~Phong();
+   __declspec(dllexport) ~Phong();
 
-  void init(const MatrixXX& V, const MatrixXXi& F, std::vector<Basis>* basis = 0, bool x_bUseEuclideanInit = false);
+  void __declspec(dllexport) init(const MatrixXX& V, const MatrixXXi& F, std::vector<Basis>* basis = 0, bool x_bUseEuclideanInit = false);
   
   // Project a point in the ambient space onto a triangle and return
   // the barycentric coordinates of the projection
@@ -53,11 +53,11 @@ public:
   // Project a point in ambient space to the mesh
   bool projectBruteForce(const Vector8 &p, int& fid, RowVector3& w, bool Phong);
   
-  bool project(const Vector8 &p, int fid_start, int& fid, RowVector3& w);
-  bool projectOnTriangle_fast(const unsigned &fid,
+  bool  __declspec(dllexport) project(const Vector8 &p, int fid_start, int& fid, RowVector3& w);
+  bool  __declspec(dllexport) projectOnTriangle_fast(const unsigned &fid,
                               const float *p,
                               float *w);
-  bool projectOnTriangleEuclidean_fast(const unsigned &fid,
+  bool __declspec(dllexport) projectOnTriangleEuclidean_fast(const unsigned &fid,
                               const float *p,
                               float *w);
   
@@ -68,9 +68,9 @@ public:
                       const double &ilya_hack_parameter = 10.);
   
   // Find the closest point on the surface starting from vid
-  int findClosest(const Vector8& p, int vid);
+  int __declspec(dllexport) findClosest(const Vector8& p, int vid);
   
-  int findClosestFace(const Vector8& p, int vid);
+  int __declspec(dllexport) findClosestFace(const Vector8& p, int vid);
   
   // find optimum by jumping across faces using the least negative weight
   bool findMinimumJumpNeg(const float *p, int fid_start, int& fid, float *w);

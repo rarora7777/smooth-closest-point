@@ -1,14 +1,15 @@
+#define _USE_MATH_DEFINES
 #include "Phong.h"
 
-#include "igl/tt.h"
-#include "igl/vf.h"
-#include "igl/edgetopology.h"
+#include "igl/triangle_triangle_adjacency.h"
+#include "igl/vertex_triangle_adjacency.h"
+#include "igl/edge_topology.h"
 #include "igl/per_vertex_normals.h"
-#include "igl/Timer.h"
+
 #include "igl/adjacency_list.h"
 
 #include <float.h>
-#include <tr1/unordered_set>
+#include <unordered_set>
 #include "null.h"
 
 
@@ -78,8 +79,8 @@ void Phong::init(const MatrixXX& V, const MatrixXXi& F, vector<Basis>* basis, bo
   
   // Compute topological relations
   igl::adjacency_list(_F, VV);
-  igl::tt(_V, _F, TT, TTi);
-  igl::vf(V, F, VF, VFi);
+  igl::triangle_triangle_adjacency(_F, TT, TTi);
+  igl::vertex_triangle_adjacency(V, F, VF, VFi);
   
   precomputeBarycentricOperator();
   precomputeKRings();
@@ -717,31 +718,11 @@ void Phong::unproject_fast(const Anchor_Set_Phong& anchor_set,
                            RowVectorX &weights,
                            const double &ilya_hack_parameter)
 {  
-#ifdef TIME_BACKWARD
-  
-  igl::Timer timer;
-  double t_init=0, t_sqd=0, t_C = 0, t_solve = 0;
-  for (int iteration = 0; iteration <1000; ++iteration)
-  {
-    
-    
-#endif
-    
-#ifdef TIME_BACKWARD
-    timer.start();
-#endif
+
     
     const float *bary = point.bc_ptr;
         
     int num_anchors = anchor_set.anchors_E.rows();
-#ifdef TIME_BACKWARD
-    timer.stop();
-    t_init += timer.getElapsedTimeInMicroSec();
-#endif
-    
-#ifdef TIME_BACKWARD
-    timer.start();
-#endif
 
     // Computing square distances
     VectorX sqd(num_anchors);
@@ -861,14 +842,6 @@ void Phong::unproject_fast(const Anchor_Set_Phong& anchor_set,
 
 #endif
     
-#ifdef TIME_BACKWARD
-    timer.stop();
-    t_sqd += timer.getElapsedTimeInMicroSec();
-#endif
-    
-#ifdef TIME_BACKWARD
-    timer.start();
-#endif
 
     // Build the constraints matrix
     float C_0[8], C_1[8];
@@ -923,14 +896,6 @@ void Phong::unproject_fast(const Anchor_Set_Phong& anchor_set,
       
       C.row(2).setOnes();
       
-#ifdef TIME_BACKWARD
-      timer.stop();
-      t_C+= timer.getElapsedTimeInMicroSec();
-#endif
-      
-#ifdef TIME_BACKWARD
-      timer.start();
-#endif
       float pp0 = 0;
       float pp1 = 0;
       for(int i=0; i<8; ++i)
@@ -948,31 +913,6 @@ void Phong::unproject_fast(const Anchor_Set_Phong& anchor_set,
     Eigen::DiagonalMatrix<ScalarType,Eigen::Dynamic> Dinv = sqd.cwiseInverse().asDiagonal();
     MatrixXX CDinv  = C*Dinv;
     Matrix33 CCDD = CDinv * CDinv.transpose();
-#ifndef TIME_BACKWARD
-    if(fabs(CCDD.determinant()) > 1e-7)
-    {
-#endif
-      weights = Dinv * CDinv.transpose() * CCDD.ldlt().solve(bary_for_solve);
-#ifndef TIME_BACKWARD
-    }
-    else
-    {
-      Eigen::JacobiSVD<MatrixXX> svd(CDinv, Eigen::ComputeFullU | Eigen::ComputeFullV);
-      weights = (Dinv*svd.solve(bary_for_solve)).transpose();
-    }
-#endif
-#ifdef TIME_BACKWARD
-    timer.stop();
-    t_solve += timer.getElapsedTimeInMicroSec();
-#endif
-#ifdef TIME_BACKWARD
-  }
-  
-  cerr<<"unproject -- init (us): "<<t_init<<endl;
-  cerr<<"unproject -- sqd (us): "<<t_sqd<<endl;
-  cerr<<"unproject -- C (us): "<<t_C<<endl;
-  cerr<<"unproject -- solve (us): "<<t_solve<<endl;
-#endif
 }
 
 
@@ -981,7 +921,7 @@ bool Phong::projectBFS(const float *p, int fid_start, int& fid, float* w)
   std::vector<int> Q;
   Q.reserve(25);
   
-  std::tr1::unordered_set<int> visited;
+  std::unordered_set<int> visited;
   size_t iter = 0;
   
   Q.push_back(fid_start);
@@ -1012,12 +952,12 @@ bool Phong::findMinimumJumpNeg(const float *p, int fid_start, int& fid, float* w
   int index_to_jump;
   //  float least_negative_weight;
   float most_negative_weight;
-  std::tr1::unordered_set<int> visited;
+  std::unordered_set<int> visited;
   bool foundVisited = false;
   
   while (!foundVisited)
   {
-    std::pair<std::tr1::unordered_set<int>::iterator,bool> ir = visited.insert(current_i);
+    std::pair<std::unordered_set<int>::iterator,bool> ir = visited.insert(current_i);
     if (!ir.second)
     {
       foundVisited = true;
@@ -1159,9 +1099,9 @@ void Phong::precomputeKRings()
     KRings.resize(_F.rows());
     
     // Compute k-rings of vertices
-    std::tr1::unordered_set<unsigned>myneighbors;
-    std::pair<std::tr1::unordered_set<unsigned>::iterator, bool> inserted;
-    std::tr1::unordered_set<unsigned>::iterator it;
+    std::unordered_set<unsigned>myneighbors;
+    std::pair<std::unordered_set<unsigned>::iterator, bool> inserted;
+    std::unordered_set<unsigned>::iterator it;
     std::vector<unsigned> tocheck;
     // Initially every set contains only itself
     for (int i=0; i<_F.rows(); i++)

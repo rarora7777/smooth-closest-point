@@ -13,7 +13,7 @@
 #define N_ITER 10
 //#define TIMERS_ENABLED
 
-class __declspec(dllexport) TrianglePhong
+class TrianglePhong
 {
 public:
   typedef Eigen::Matrix<float, 8, 1> Vector;
