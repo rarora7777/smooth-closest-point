@@ -53,7 +53,8 @@ Phong::Phong()
 
 Phong::~Phong()
 {
-  a_V.dealloc();
+  //a_V.dealloc();
+	_aligned_free(a_V.ptr());
 }
 
 void Phong::init(const MatrixXX& V, const MatrixXXi& F, vector<Basis>* basis, bool x_bUseEuclideanInit)
@@ -661,21 +662,6 @@ bool Phong::projectBruteForce(const Vector8 &p, int& fid, RowVector3& w, bool Ph
   return fid!=-1;
 }
 
-bool Phong::project(const double &p, int fid_start, double& w)
-{
-	Map<Vector8> _p;
-	_p << p[0] << p[1] << p[2] << p[3] << p[4] << p[5] << p[6] << p[7];
-	
-	RowVector3 _w;
-	bool res = project(_p, fid_start, _w);
-	
-	w = new double(3);
-	w[0] = _w(0);
-	w[1] = _w(1);
-	w[2] = _w(2);
-	return res;
-}
-
 bool Phong::project(const Vector8 &p, int fid_start, int& fid, RowVector3& w)
 {
   
@@ -1031,7 +1017,8 @@ int Phong::findClosest(const Vector8& p, int vid)
       }
     }
   }
-  a_p.dealloc();
+  _aligned_free(a_p.ptr());
+  //a_p.dealloc();
   return current_i;
 }
 int Phong::findClosestFace(const Vector8& p, int fid)
@@ -1067,8 +1054,10 @@ int Phong::findClosestFace(const Vector8& p, int fid)
       }
     }
   }
-  a_p.dealloc();
-  a_target.dealloc();
+  //a_p.dealloc();
+  //a_target.dealloc();
+  _aligned_free(a_p.ptr());
+  _aligned_free(a_target.ptr());
   return current_i;
 }
 
@@ -1154,4 +1143,54 @@ void Phong::precomputeKRings()
         }
       }
     }
+}
+
+Phong* createPhongObject(double *V, const int nV, const int dim, unsigned int *F, const int nF)
+{
+	// MatrixXX _V(nV, dim);
+	// MatrixXXi _F(nF, 3);
+	
+	// _V.data() = V;
+	// _F.data() = F;
+	
+	Eigen::Map<Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic>> _V(V, nV, dim);
+	Eigen::Map<Eigen::Matrix<IndexType, Eigen::Dynamic, Eigen::Dynamic>> _F(F, nF, 3);
+	
+	Phong *phong = new Phong();
+	phong->init(_V, _F);
+
+	std::cout << _V << std::endl;
+	std::cout << _F << std::endl;
+	
+	return phong;
+}
+
+float *project(Phong* phong, const double *p, int fid_start)
+{
+	Eigen::Matrix<ScalarType, 8, 1> _p;
+	_p(0) = p[0];
+	_p(1) = p[1];
+	_p(2) = p[2];
+	_p(3) = p[3];
+	_p(4) = p[4];
+	_p(5) = p[5];
+	_p(6) = p[6];
+	_p(7) = p[7];
+	
+	RowVector3 _w;
+	int fid;
+	bool res = phong->project(_p, fid_start, fid, _w);
+	
+	float *w = new float(4);
+	w[0] = _w(0);
+	w[1] = _w(1);
+	w[2] = _w(2);
+	w[3] = (float)fid;
+	return w;
+}
+
+bool deletePhongObject(Phong *phong)
+{
+	delete phong;
+	return true;
 }

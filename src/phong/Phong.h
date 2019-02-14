@@ -37,11 +37,11 @@ public:
   typedef Eigen::Matrix<IndexType, 1, Eigen::Dynamic> RowVectorXi;
 
   
-  __declspec(dllexport) Phong();
+  Phong();
   
-   __declspec(dllexport) ~Phong();
+  ~Phong();
 
-  void __declspec(dllexport) init(const MatrixXX& V, const MatrixXXi& F, std::vector<Basis>* basis = 0, bool x_bUseEuclideanInit = false);
+  void init(const MatrixXX& V, const MatrixXXi& F, std::vector<Basis>* basis = 0, bool x_bUseEuclideanInit = false);
   
   // Project a point in the ambient space onto a triangle and return
   // the barycentric coordinates of the projection
@@ -53,12 +53,11 @@ public:
   // Project a point in ambient space to the mesh
   bool projectBruteForce(const Vector8 &p, int& fid, RowVector3& w, bool Phong);
   
-  bool __declspec(dllexport) project(const double &p, int fid_start, double& w);
   bool project(const Vector8 &p, int fid_start, int& fid, RowVector3& w);
-  bool __declspec(dllexport) projectOnTriangle_fast(const unsigned &fid,
+  bool projectOnTriangle_fast(const unsigned &fid,
                               const float *p,
                               float *w);
-  bool __declspec(dllexport) projectOnTriangleEuclidean_fast(const unsigned &fid,
+  bool projectOnTriangleEuclidean_fast(const unsigned &fid,
                               const float *p,
                               float *w);
   
@@ -69,9 +68,9 @@ public:
                       const double &ilya_hack_parameter = 10.);
   
   // Find the closest point on the surface starting from vid
-  int __declspec(dllexport) findClosest(const Vector8& p, int vid);
+  int findClosest(const Vector8& p, int vid);
   
-  int __declspec(dllexport) findClosestFace(const Vector8& p, int vid);
+  int findClosestFace(const Vector8& p, int vid);
   
   // find optimum by jumping across faces using the least negative weight
   bool findMinimumJumpNeg(const float *p, int fid_start, int& fid, float *w);
@@ -180,4 +179,11 @@ public:
   TrianglePhong TrianglesPhong;
     
 };
+
+extern "C"
+{
+	__declspec(dllexport) Phong* createPhongObject(double* V, const int nV, const int dim, unsigned int* F, const int nF);
+	__declspec(dllexport) float* project(Phong *phong, const double* p, int fid_start);
+	__declspec(dllexport) bool deletePhongObject(Phong *phong);
+}
 #endif
