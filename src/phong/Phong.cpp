@@ -31,7 +31,7 @@ static const __m128 ones = _mm_set1_ps(1);
 
 using namespace std;
 
-Anchor_Set_Phong::Anchor_Set_Phong(const std::vector<PointOnSurface > &point_set, const MatrixXX& E, const MatrixX3i& F):
+Anchor_Set_Phong::Anchor_Set_Phong(const std::vector<PointOnSurface> &point_set, const MatrixXX& E, const MatrixX3i& F):
 _point_set(point_set)
 {
   anchors_E.resize(point_set.size(),8);
@@ -659,6 +659,21 @@ bool Phong::projectBruteForce(const Vector8 &p, int& fid, RowVector3& w, bool Ph
   }
   
   return fid!=-1;
+}
+
+bool Phong::project(const double &p, int fid_start, double& w)
+{
+	Map<Vector8> _p;
+	_p << p[0] << p[1] << p[2] << p[3] << p[4] << p[5] << p[6] << p[7];
+	
+	RowVector3 _w;
+	bool res = project(_p, fid_start, _w);
+	
+	w = new double(3);
+	w[0] = _w(0);
+	w[1] = _w(1);
+	w[2] = _w(2);
+	return res;
 }
 
 bool Phong::project(const Vector8 &p, int fid_start, int& fid, RowVector3& w)

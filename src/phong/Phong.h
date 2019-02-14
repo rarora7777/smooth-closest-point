@@ -53,8 +53,9 @@ public:
   // Project a point in ambient space to the mesh
   bool projectBruteForce(const Vector8 &p, int& fid, RowVector3& w, bool Phong);
   
-  bool  __declspec(dllexport) project(const Vector8 &p, int fid_start, int& fid, RowVector3& w);
-  bool  __declspec(dllexport) projectOnTriangle_fast(const unsigned &fid,
+  bool __declspec(dllexport) project(const double &p, int fid_start, double& w);
+  bool project(const Vector8 &p, int fid_start, int& fid, RowVector3& w);
+  bool __declspec(dllexport) projectOnTriangle_fast(const unsigned &fid,
                               const float *p,
                               float *w);
   bool __declspec(dllexport) projectOnTriangleEuclidean_fast(const unsigned &fid,
