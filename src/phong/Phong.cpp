@@ -1165,7 +1165,7 @@ Phong* createPhongObject(double *V, const int nV, const int dim, unsigned int *F
 	return phong;
 }
 
-float *project(Phong* phong, const double *p, int fid_start)
+bool project(Phong* phong, const double *p, int fid_start, float *w)
 {
 	Eigen::Matrix<ScalarType, 8, 1> _p;
 	_p(0) = p[0];
@@ -1181,12 +1181,11 @@ float *project(Phong* phong, const double *p, int fid_start)
 	int fid;
 	bool res = phong->project(_p, fid_start, fid, _w);
 	
-	float *w = new float(4);
 	w[0] = _w(0);
 	w[1] = _w(1);
 	w[2] = _w(2);
 	w[3] = (float)fid;
-	return w;
+	return res;
 }
 
 bool deletePhongObject(Phong *phong)

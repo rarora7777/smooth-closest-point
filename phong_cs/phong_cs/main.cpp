@@ -21,11 +21,13 @@ int main()
 	};
 
 	auto phong = createPhongObject(vertices, 8, 8, triangles, 12);
-	double point[] = { 1.1, 1, 1, 0, 0, 0, 0, 0 };
-	float *projection = project(phong, point, 0);
+	double point[] = { 1, 1.1, 1, 0, 0, 0, 0, 0 };
+	float projection[4];
+	bool res = project(phong, point, 0, projection);
 	
-	std::cout << int(projection[3]) << projection[0] << projection[1] << projection[2] <<std::endl;
+	std::cout << int(projection[3]) << ' ' << projection[0] << ' ' << projection[1] << ' ' << projection[2] <<std::endl;
 
 	deletePhongObject(phong);
+	delete[] projection;
 	return 0;
 }

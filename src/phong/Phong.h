@@ -177,13 +177,40 @@ private:
   
 public:
   TrianglePhong TrianglesPhong;
+
+  int sizeV()
+  {
+	  return _V.rows();
+  }
+
+  int sizeF()
+  {
+	  return _F.rows();
+  }
     
 };
 
 extern "C"
 {
 	__declspec(dllexport) Phong* createPhongObject(double* V, const int nV, const int dim, unsigned int* F, const int nF);
-	__declspec(dllexport) float* project(Phong *phong, const double* p, int fid_start);
+	__declspec(dllexport) bool project(Phong *phong, const double* p, int fid_start, float *w);
 	__declspec(dllexport) bool deletePhongObject(Phong *phong);
+	__declspec(dllexport) bool arrayReturnTest(double *arr)
+	{
+		if (!arr)
+			return false;
+		arr[0] = 1;
+		arr[1] = 2;
+		arr[2] = 3.25;
+		return true;
+	}
+
+	__declspec(dllexport) int checkMeshSize(Phong *phong)
+	{
+		if (!phong)
+			return -1;
+		else
+			return phong->sizeV() + phong->sizeF();
+	}
 }
 #endif

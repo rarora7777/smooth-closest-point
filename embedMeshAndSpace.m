@@ -1,4 +1,4 @@
-function ER = embedMeshAndSpace(V, F, V1, F1, V2, F2, n, d)
+function [ER, VS, T] = embedMeshAndSpace(V, F, V1, F1, V2, F2, n, d)
 % Compute the quasi-geodesic embedding for the mesh V,F
 % Euclidean distance in EI approximate the geodesic over V,F
 %
@@ -11,6 +11,7 @@ function ER = embedMeshAndSpace(V, F, V1, F1, V2, F2, n, d)
 %
 % Output:
 % ER: #Vxn quasi-geodesic embedding
+% VS,T: Tet-mesh of the space b/w (V1,F1) and (V2,F2)
 
     if (~exist('n','var') || isempty(n))
       n = 1000;
