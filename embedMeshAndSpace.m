@@ -1,4 +1,4 @@
-function [ER, VS, T] = embedMeshAndSpace(V, F, V1, F1, V2, F2, n, d)
+function [ER, VS, T] = embedMeshAndSpace(V, F, V1, F1, V2, F2, n, d, holePos)
 % Compute the quasi-geodesic embedding for the mesh V,F
 % Euclidean distance in EI approximate the geodesic over V,F
 %
@@ -20,6 +20,10 @@ function [ER, VS, T] = embedMeshAndSpace(V, F, V1, F1, V2, F2, n, d)
     if (~exist('d','var') || isempty(d))
       d = 8;
     end
+    
+    if (~exist('holePos','var') || isempty(holePos))
+      holePos = mean(V);
+    end
 
     %% tetmesh the inner and outer regions of space
     % ASSUMPTIONS: (V, F) has sphere topology, and mean(V) lies inside
@@ -28,13 +32,13 @@ function [ER, VS, T] = embedMeshAndSpace(V, F, V1, F1, V2, F2, n, d)
     Vout = [V; V1];
     Fout = [F(:, [2 1 3]); F1+size(V, 1)];
 
-    [VS1, T1] = tetgen(Vout, Fout, 'Flags',sprintf('-Yq1.2a%0.17f',16*avgedge(Vout,Fout)^3/(6*sqrt(2))), 'Holes',mean(V));
+    [VS1, T1] = tetgen(Vout, Fout, 'Flags',sprintf('-Yq1.2a%0.17f',16*avgedge(Vout,Fout)^3/(6*sqrt(2))), 'Holes',holePos);
 
     % the inner offset surface can be empty if the offset distance is too high
     if numel(F2)==0
         [VS2, T2] = tetgen(Vin, Fin, 'Flags',sprintf('-Yq1.2a%0.17f',16*avgedge(Vin,Fin)^3/(6*sqrt(2))));
     else
-        [VS2, T2] = tetgen(Vin, Fin, 'Flags',sprintf('-Yq1.2a%0.17f',16*avgedge(Vin,Fin)^3/(6*sqrt(2))), 'Holes',mean(V));
+        [VS2, T2] = tetgen(Vin, Fin, 'Flags',sprintf('-Yq1.2a%0.17f',16*avgedge(Vin,Fin)^3/(6*sqrt(2))), 'Holes',holePos);
     end
 
     % Now combine the two
@@ -55,7 +59,8 @@ function [ER, VS, T] = embedMeshAndSpace(V, F, V1, F1, V2, F2, n, d)
 
     %% Embed in n-d, while trying to preserve the distances between the samples
     D = (D + D') ./ 2;
-    E  = mdscale(D, d, 'Criterion', 'metricstress', 'Weights', 1./D.^2);
+    opts = statset('MaxIter', 2000);
+    E  = mdscale(D, d, 'Criterion', 'metricstress', 'Weights', 1./D.^2, 'Options', opts);
 
     %% Interpolate with LS Meshes
     d = size(E, 2);
