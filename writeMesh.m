@@ -9,6 +9,7 @@ function writeMesh(filename, V3D, V, F)
     
     assert(dimSimplex==3 || dimSimplex==4);
     assert(size(V3D, 2)==3);
+    assert(size(V, 1)==size(V3D, 1))
     
     fprintf(f, "%d\n%d\n", nV, nF);
     
