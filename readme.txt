@@ -6,7 +6,10 @@ cl decimator.cc /I OPENMESH_ROOT/include /link /LIBPATH:OPENMESH_ROOT/lib OpenMe
 
 Compile Phong projection code to a dynamic library (DLL) using
 cd src/phong
-cl /LD Phong.cpp Trianglephong.cpp /I "../utils" /I ".." /I EIGEN3_ROOT /I LIBIGL_ROOT/include
+cl /LD Phong.cpp Trianglephong.cpp /I "../utils" /I ".." /I $env:EIGEN3_ROOT /I $env:LIBIGL_ROOT/include
+
+If using command prompt instead of PowerShell, replace $env:blah with "%blah%", with quotes.
+
 
 ------ Introduction
 
