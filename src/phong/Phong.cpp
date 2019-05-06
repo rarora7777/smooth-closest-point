@@ -1159,8 +1159,8 @@ Phong* createPhongObject(double *V, const int nV, const int dim, unsigned int *F
 	Phong *phong = new Phong();
 	phong->init(_V, _F);
 
-	std::cout << _V << std::endl;
-	std::cout << _F << std::endl;
+	// std::cout << _V << std::endl;
+	// std::cout << _F << std::endl;
 	
 	return phong;
 }
