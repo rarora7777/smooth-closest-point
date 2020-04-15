@@ -1,16 +1,27 @@
------- Compilation
+# Compilation
 
-Before computing the Euclidean projection using the MATLAB code, first compile decimator:
+Before computing the Euclidean projection using the MATLAB code, first compile decimatorusing VS 2017 or VS 2019.
+
+Dependency: OpenMesh 7.1
+
+```
 cd decimator
-cl decimator.cc /I OPENMESH_ROOT/include /link /LIBPATH:OPENMESH_ROOT/lib OpenMeshCore.lib OpenMeshTools.lib
+cl decimator.cc /I $env:OPENMESH_ROOT/include /link /LIBPATH:$env:OPENMESH_ROOT/lib OpenMeshCore.lib OpenMeshTools.lib
+```
 
-Compile Phong projection code to a dynamic library (DLL) using
+Compile Phong projection code to a dynamic library (DLL) using VS 2017 or VS 2019.
+
+Dependencies: LibIGL and Eigen3
+
+```
 cd src/phong
 cl /LD Phong.cpp Trianglephong.cpp /I "../utils" /I ".." /I $env:EIGEN3_ROOT /I $env:LIBIGL_ROOT/include
+```
 
-If using command prompt instead of PowerShell, replace $env:blah with "%blah%", with quotes.
+If using command prompt instead of PowerShell, replace `$env:blah` with `"%blah%"`, with quotes.
 
 
+# Stuff from Panozzo et al.'s original repo
 ------ Introduction
 
 Reference implementation for the paper Weighted Averages on Surfaces
