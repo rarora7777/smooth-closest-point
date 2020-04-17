@@ -1,5 +1,6 @@
 #include <Eigen/Core>
 #include <Phong.h>
+#include <fstream>
 
 int main()
 {
@@ -19,8 +20,43 @@ int main()
 		2, 3, 3, 4, 2, 5, 7, 4, 4, 7, 6, 1,
 		1, 2, 4, 5, 5, 6, 4, 3, 7, 6, 7, 6
 	};
+	
+	fstream file;
+	file.open("../../Assets/StreamingAssets/hand_tri.txt");
+	
+	const int dim = 8;
+	int nV, nF;
+	file >> nV >> nF;
+	
+	std::vector<double> vertices(dim * nV);
+	std:vector<unsigned int> triangles(3 * nF);
+	
+	for (int i = 0; i < FV.Length; ++i)
+	{
+		double val;
+		file >> val;
+		file >> val;
+		file >> val;
+		
+		for (int j = 0; j < dim; ++j)
+		{
+			file >> val;
+			vertices[j * nV + i] = val;
+		}
+	}
+            
+	for (int i = 0; i < FF.Length; ++i)
+		for (int j = 0; j < 3; ++j)
+		{
+			unsigned int val;
+			file >> val;
+			triangles[j * nF + i] = val;
+		}
+	
 
-	auto phong = createPhongObject(vertices, 8, 8, triangles, 12);
+	file.close();
+	
+	auto phong = createPhongObject(vertices.data(), nV, 8, triangles.data(), nF);
 	double point[] = { 1, 1.1, 1, 0, 0, 0, 0, 0 };
 	float projection[4];
 	bool res = project(phong, point, 0, projection);

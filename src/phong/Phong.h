@@ -1,6 +1,12 @@
 #ifndef PHONG_H
 #define PHONG_H
 
+#ifdef NO_LIBRARY_EXPORTS
+#    define LIBRARY_API
+#else
+#    define LIBRARY_API __declspec(dllexport)
+#endif
+
 #include <assert.h>
 #include "core/types.h"
 #include <vector>
@@ -192,25 +198,8 @@ public:
 
 extern "C"
 {
-	__declspec(dllexport) Phong* createPhongObject(double* V, const int nV, const int dim, unsigned int* F, const int nF);
-	__declspec(dllexport) bool project(Phong *phong, const double* p, int fid_start, float *w);
-	__declspec(dllexport) bool deletePhongObject(Phong *phong);
-	__declspec(dllexport) bool arrayReturnTest(double *arr)
-	{
-		if (!arr)
-			return false;
-		arr[0] = 1;
-		arr[1] = 2;
-		arr[2] = 3.25;
-		return true;
-	}
-
-	__declspec(dllexport) int checkMeshSize(Phong *phong)
-	{
-		if (!phong)
-			return -1;
-		else
-			return phong->sizeV() + phong->sizeF();
-	}
+	LIBRARY_API Phong* createPhongObject(double* V, const int nV, const int dim, unsigned int* F, const int nF);
+	LIBRARY_API bool project(Phong *phong, const double* p, int fid_start, float *w);
+	LIBRARY_API bool deletePhongObject(Phong *phong);
 }
 #endif
