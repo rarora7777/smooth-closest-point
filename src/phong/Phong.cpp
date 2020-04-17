@@ -1153,11 +1153,15 @@ Phong* createPhongObject(double *V, const int nV, const int dim, unsigned int *F
 	// _V.data() = V;
 	// _F.data() = F;
 	
+	auto start = chrono::steady_clock::now();
 	Eigen::Map<Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic>> _V(V, nV, dim);
 	Eigen::Map<Eigen::Matrix<IndexType, Eigen::Dynamic, Eigen::Dynamic>> _F(F, nF, 3);
 	
 	Phong *phong = new Phong();
 	phong->init(_V, _F);
+	auto end = chrono::steady_clock::now();
+	
+	phong->initTime = chrono::duration_cast<chrono::milliseconds>(end - start).count()/1000.0;
 
 	// std::cout << _V << std::endl;
 	// std::cout << _F << std::endl;
@@ -1192,4 +1196,9 @@ bool deletePhongObject(Phong *phong)
 {
 	delete phong;
 	return true;
+}
+
+double getInitTime(Phong *phong)
+{
+	return phong->initTime;
 }

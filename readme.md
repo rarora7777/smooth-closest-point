@@ -6,7 +6,7 @@ Dependency: OpenMesh 7.1
 
 ```
 cd decimator
-cl decimator.cc /I $env:OPENMESH_ROOT/include /link /LIBPATH:$env:OPENMESH_ROOT/lib OpenMeshCore.lib OpenMeshTools.lib
+cl /O2 decimator.cc /I $env:OPENMESH_ROOT/include /link /LIBPATH:$env:OPENMESH_ROOT/lib OpenMeshCore.lib OpenMeshTools.lib
 ```
 
 Compile Phong projection code to a dynamic library (DLL) using VS 2017 or VS 2019.
@@ -15,7 +15,7 @@ Dependencies: LibIGL and Eigen3
 
 ```
 cd src/phong
-cl /LD Phong.cpp Trianglephong.cpp /I "../utils" /I ".." /I $env:EIGEN3_ROOT /I $env:LIBIGL_ROOT/include
+cl /O2 /LD Phong.cpp Trianglephong.cpp /I "../utils" /I ".." /I $env:EIGEN3_ROOT /I $env:LIBIGL_ROOT/include
 ```
 
 If using command prompt instead of PowerShell, replace `$env:blah` with `"%blah%"`, with quotes.
