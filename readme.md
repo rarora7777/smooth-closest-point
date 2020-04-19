@@ -1,6 +1,6 @@
 # Compilation
 
-Before computing the Euclidean projection using the MATLAB code, first compile decimatorusing VS 2017 or VS 2019.
+Before computing the Euclidean projection using the MATLAB code, first compile decimator using VS 2017 or VS 2019.
 
 Dependency: OpenMesh 7.1
 
