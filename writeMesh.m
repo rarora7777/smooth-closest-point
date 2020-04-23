@@ -5,14 +5,21 @@ function writeMesh(filename, V3D, V, F)
     nF = size(F, 1);
     dimSimplex = size(F, 2);
     
+    % use 0-based indexing
     F = F-1;
     
+    % make sure it's a triangle or tet mesh
     assert(dimSimplex==3 || dimSimplex==4);
-    assert(size(V3D, 2)==3);
-    assert(size(V, 1)==size(V3D, 1))
+    % ensure V3D is actually 3D
+    assert(size(V3D, 2) == 3);
+    % ensure |V| = |V3D|
+    assert(size(V3D, 1) == nV)
     
+    % first, write out |V| and |F|
     fprintf(f, "%d\n%d\n", nV, nF);
     
+    % for each vertex, write out 3D position ina line, followed by nD
+    % position in the next line
     for i=1:nV
         fprintf(f, "%f %f %f\n", V3D(i, 1), V3D(i, 2), V3D(i, 3));
         for j=1:dim-1
@@ -21,6 +28,7 @@ function writeMesh(filename, V3D, V, F)
         fprintf(f, "%f\n", V(i, dim));
     end
     
+    % then write out F, one face/cell per line
     for i=1:nF
         if dimSimplex==3
             fprintf(f, "%d %d %d\n", F(i, 1), F(i, 2), F(i, 3));

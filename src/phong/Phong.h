@@ -13,7 +13,7 @@
 #include "aligned_matrix.h"
 #include <chrono>
 
-#ifdef ICC
+#ifdef __INTEL_COMPILER
 #include <immintrin.h>
 #endif
 
@@ -113,7 +113,7 @@ private:
   // Compute squared norm of (Erow-p)
   float squaredNorm(const float* Erow, const float* p);
   
-#ifdef ICC
+#ifdef __INTEL_COMPILER
   inline __m128 CrossProduct(__m128 a, __m128 b)
   {
     return _mm_sub_ps(

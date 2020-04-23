@@ -14,7 +14,7 @@
 
 
 // get AVX intrinsics  
-#ifdef ICC
+#ifdef __INTEL_COMPILER
 #include <immintrin.h>  
 static const __m128 SIGNMASK = _mm_castsi128_ps(_mm_set1_epi32(0x80000000));
 static const __m128 eye = _mm_setr_ps(1, 0, 0, 0);
@@ -27,7 +27,7 @@ static const __m128 ones = _mm_set1_ps(1);
 
 //#define TIME_BACKWARD
 
-//#define REGISTERS_ONLY
+#define REGISTERS_ONLY
 
 using namespace std;
 
@@ -270,7 +270,7 @@ bool Phong::projectOnTriangle(const unsigned &fid, const Vector8 &p, RowVector3&
   
   return (w(0) > 0) && (w(1) > 0) && (w(2) > 0); 
 }
-#ifdef ICC
+#ifdef __INTEL_COMPILER
 
 #ifdef REGISTERS_ONLY
 //1 cross product at a time (still SSE-d), as much in registers as possible
@@ -1061,7 +1061,7 @@ int Phong::findClosestFace(const Vector8& p, int fid)
   return current_i;
 }
 
-#ifdef ICC
+#ifdef __INTEL_COMPILER
 float Phong::squaredNorm(const float* Erow, const float* p)
 {
 	__m256 avx_Erow, avx_p;

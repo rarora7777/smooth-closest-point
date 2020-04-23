@@ -93,14 +93,14 @@ namespace Phong
 
         // tet mesh
         VectorX[] TV;
-        Vector3[] TV3D;
+        VectorX[] TV3D;
         Tet[] TT;
         Matrix4x4[] TMat;
         List<int>[] vertTetList;
 
         // surface mesh
         VectorX[] FV;
-        Vector3[] FV3D;
+        VectorX[] FV3D;
         Tri[] FF;
         const int dim = 8;
 
@@ -219,12 +219,11 @@ namespace Phong
 
             return true;
         }
+
+        public static void Main(string[] args)
+        {
+            Init();
+        }
     }
 }
 
-public static int Main()
-{
-    var phong = new Phong.PhongProjection();
-    phong.Init();
-    return 0;
-}

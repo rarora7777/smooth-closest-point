@@ -6,12 +6,15 @@ function [ER, VS, T] = embedMeshAndSpace(V, F, V1, F1, V2, F2, n, d, holePos)
 % V,F: mesh description
 % V1,F1: outer offset surface
 % V2,F2: inner offset surface
-% n: number of samples taken over the mesh [default: 500]
+% n: number of samples taken over the mesh [default: 1000]
 % d: number of dimensions of the embedding [default: 8]
+% holePos: #cavity x 3 list of points [default: mean(V)]
+% Typically, you'd want the holes to be inside (V,F) and outside (V2, F2)
 %
 % Output:
 % ER: #Vxn quasi-geodesic embedding
 % VS,T: Tet-mesh of the space b/w (V1,F1) and (V2,F2)
+%       If (V2,F2) is empty, then (VS,T): tet-mesh b/w (V1,F1) and (V,F)
 
     if (~exist('n','var') || isempty(n))
       n = 1000;
@@ -26,7 +29,6 @@ function [ER, VS, T] = embedMeshAndSpace(V, F, V1, F1, V2, F2, n, d, holePos)
     end
 
     %% tetmesh the inner and outer regions of space
-    % ASSUMPTIONS: (V, F) has sphere topology, and mean(V) lies inside
     Vin = [V; V2];
     Fin = [F; F2+size(V, 1)];
     Vout = [V; V1];

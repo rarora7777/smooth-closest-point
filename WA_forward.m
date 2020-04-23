@@ -33,8 +33,13 @@ weights_path   = [pwd '/t_W.txt'];%[tempname];
 dlmwrite(weights_path, W, 'delimiter', ' ', 'precision', 12);
 
 %% Call the WA binary
-WA_binary = [pwd '/WA'];
+if (isunix)
+    WA_binary = [pwd '/WA'];
+else
+    WA_binary = [pwd '/WA_ICC.exe'];
+end
 command_string = [WA_binary ' f ' mesh_path ' ' anchors_path ' ' weights_path ' ' out_path];
+
 unix(command_string);
 %command_string
 

@@ -233,12 +233,12 @@ void TrianglePhong::blend_aux(unsigned fid, float coeff[6], float* out)
     float* ert = getErt(fid,i);
     float* et1 = getEt1(fid,i);
     
-#ifdef ICC
+#ifdef __INTEL_COMPILER
     __assume_aligned(ert, 32);
     __assume_aligned(et1, 32);
 #endif
     
-#ifdef ICC
+#ifdef __INTEL_COMPILER
 #pragma ivdep
 #pragma vector aligned
 #pragma vector always
@@ -264,13 +264,13 @@ void TrianglePhong::blendPosf(unsigned fid, float* bary, float* blended)
   const float* c1 = getCorner(fid, 1);
   const float* c2 = getCorner(fid, 2);
   
-#ifdef ICC
+#ifdef __INTEL_COMPILER
   __assume_aligned(c0, 32);
   __assume_aligned(c1, 32);
   __assume_aligned(c2, 32);
 #endif
   
-#ifdef ICC
+#ifdef __INTEL_COMPILER
 #pragma ivdep
 #pragma vector aligned
 #pragma vector always
@@ -399,7 +399,7 @@ void TrianglePhong::project(unsigned fid, const float* point, float* w)
       }
     }
     
-#ifdef ICC
+#ifdef __INTEL_COMPILER
 #pragma ivdep
 #pragma vector aligned
 #pragma vector always
