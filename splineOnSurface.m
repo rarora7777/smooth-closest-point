@@ -22,6 +22,13 @@ function [path, evalPath] = splineOnSurface(V, ER, F, intFaces, lambda, order, n
     fIdx = WA(:, 1);
     bary = [WA(:, 2) WA(:, 3) 1-WA(:, 2)-WA(:, 3)];
 
+
+%% DEBUG
+%     numSplineEvalPts = numControlPts;
+%     fIdx = intFaces;
+%     bary = lambda;
+
+%%
     % initialize the geodesic computation library
     global geodesic_library;
     geodesic_library = 'geodesic_release';
@@ -33,7 +40,7 @@ function [path, evalPath] = splineOnSurface(V, ER, F, intFaces, lambda, order, n
     i = numSplineEvalPts;
     fv = [V(F(fIdx(i), 1), :); V(F(fIdx(i), 2), :); V(F(fIdx(i), 3), :)];
     
-    destination = geodesic_create_surface_point('face', fIdx(i-1), bary(i-1, :) * fv);
+    destination = geodesic_create_surface_point('face', fIdx(i), bary(i, :) * fv);
     evalPath = cell(numSplineEvalPts, 1);
     evalPath{i} = destination;
     
@@ -47,9 +54,9 @@ function [path, evalPath] = splineOnSurface(V, ER, F, intFaces, lambda, order, n
         
         geodesic_propagate(algorithm, source_points);
         segment = geodesic_trace_back(algorithm, destination);
-        path = [path(:); flipud(segment(1:end-1))];
+        path = [segment(2:end); path(:)];
     end
-    path = [path; destination];
+    path = [{destination}; path];
     
     geodesic_delete;
 end

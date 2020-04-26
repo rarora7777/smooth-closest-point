@@ -36,7 +36,7 @@ dlmwrite(weights_path, W, 'delimiter', ' ', 'precision', 12);
 if (isunix)
     WA_binary = [pwd '/WA'];
 else
-    WA_binary = [pwd '/WA_ICC.exe'];
+    WA_binary = [pwd '/WA.exe'];
 end
 command_string = [WA_binary ' f ' mesh_path ' ' anchors_path ' ' weights_path ' ' out_path];
 
