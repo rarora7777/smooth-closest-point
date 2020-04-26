@@ -1,4 +1,4 @@
-function [path, evalPath] = splineOnSurface(V, ER, F, intFaces, lambda, order, numSplineEvalPts)
+function [path] = splineOnSurface(V, ER, F, intFaces, lambda, order, numSplineEvalPts)
 
     % (V, F) is the mesh in 3D
     % ER is the n-dimensional embedding of ER
@@ -23,19 +23,14 @@ function [path, evalPath] = splineOnSurface(V, ER, F, intFaces, lambda, order, n
     bary = [WA(:, 2) WA(:, 3) 1-WA(:, 2)-WA(:, 3)];
 
 
-%% DEBUG
-%     numSplineEvalPts = numControlPts;
-%     fIdx = intFaces;
-%     bary = lambda;
-
 %%
-    % initialize the geodesic computation library
-    global geodesic_library;
-    geodesic_library = 'geodesic_release';
-    mesh = geodesic_new_mesh(V, F);
-    algorithm = geodesic_new_algorithm(mesh, 'exact');
-    
-    path = cell(1, 0);
+%     % initialize the geodesic computation library
+%     global geodesic_library;
+%     geodesic_library = 'geodesic_release';
+%     mesh = geodesic_new_mesh(V, F);
+%     algorithm = geodesic_new_algorithm(mesh, 'exact');
+%     
+%     path = cell(1, 0);
     
     i = numSplineEvalPts;
     fv = [V(F(fIdx(i), 1), :); V(F(fIdx(i), 2), :); V(F(fIdx(i), 3), :)];
@@ -45,18 +40,23 @@ function [path, evalPath] = splineOnSurface(V, ER, F, intFaces, lambda, order, n
     evalPath{i} = destination;
     
     for i = numSplineEvalPts:-1:2
-        fv = [V(F(fIdx(i), 1), :); V(F(fIdx(i), 2), :); V(F(fIdx(i), 3), :)];
-        source_points = {geodesic_create_surface_point('face', fIdx(i), bary(i, :) * fv)};
+%         fv = [V(F(fIdx(i), 1), :); V(F(fIdx(i), 2), :); V(F(fIdx(i), 3), :)];
+%         source_points = {geodesic_create_surface_point('face', fIdx(i), bary(i, :) * fv)};
         
         fv = [V(F(fIdx(i-1), 1), :); V(F(fIdx(i-1), 2), :); V(F(fIdx(i-1), 3), :)];
         destination = geodesic_create_surface_point('face', fIdx(i-1), bary(i-1, :) * fv);
         evalPath{i-1} = destination;
         
-        geodesic_propagate(algorithm, source_points);
-        segment = geodesic_trace_back(algorithm, destination);
-        path = [segment(2:end); path(:)];
+%         geodesic_propagate(algorithm, source_points);
+%         segment = geodesic_trace_back(algorithm, destination);
+%         path = [segment(2:end); path(:)];
     end
-    path = [{destination}; path];
+%     path = [{destination}; path];
+
+
+    path = evalPath;
     
     geodesic_delete;
+    
+    
 end
