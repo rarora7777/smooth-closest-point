@@ -8,14 +8,13 @@ function [V3D, V, F] = readMesh(filename, dim, dimSimplex)
     
     f = fopen(filename, 'r');
     
-    
     % first, read in |V| and |F|
     nV = str2double(fgetl(f));
     nF = str2double(fgetl(f));
     
     V = zeros(nV, dim);
     V3D = zeros(nV, 3);
-%     F = zeros(nF, dimSimplex);
+    F = zeros(nF, dimSimplex);
     
     % for each vertex, read in 3D position in a line, followed by nD
     % position in the next line
@@ -24,15 +23,19 @@ function [V3D, V, F] = readMesh(filename, dim, dimSimplex)
         V(i, :) = str2num(fgetl(f));
     end
     
-    if dimSimplex == 3
-        formatSpec = '%d %d %d';
-    else
-        formatSpec = '%d %d %d %d';
+%     if dimSimplex == 3
+%         formatSpec = '%d %d %d';
+%     else
+%         formatSpec = '%d %d %d %d';
+%     end
+%     
+%     % then read in F
+%     F = fscanf(f, formatSpec, [nF, dimSimplex]);
+
+    for i=1:nF
+        F(i, :) = str2num(fgetl(f));
     end
     
-    % then read in F
-    F = fscanf(f, formatSpec, [nF, dimSimplex]);
-
     % use 1-based indexing
     F = F+1;
     

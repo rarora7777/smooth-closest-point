@@ -46,7 +46,9 @@ function [vIdx, fIdx, bary] = sampleControlPoints(V, F, numSample, targetDist, t
     [f, b] = findPositionInFaces(F, vIdx(1));
     fIdx(1) = f;
     bary(1, :) = b;
-    distGeodesicOld = inf(nV, 1);
+%     distGeodesicOld = inf(nV, 1);
+    
+    avoid = false(nV, 1);
     
     for i=2:numSample
         srcIdx = vIdx(i-1);
@@ -58,14 +60,15 @@ function [vIdx, fIdx, bary] = sampleControlPoints(V, F, numSample, targetDist, t
         distGauss = acos(dot(N, repmat(N(srcIdx, :), nV, 1), 2));
         
         err = (distGeodesic - targetDist).^2 + ((distGauss - targetTheta)/pi).^2;
-        err(distGeodesicOld < targetDist) = inf;
+        err(avoid) = inf;
         
         [~, minIdx] = min(err);
         vIdx(i) = minIdx;
         [f, b] = findPositionInFaces(F, minIdx);
         fIdx(i) = f;
         bary(i, :) = b;
-        distGeodesicOld = distGeodesic;
+        avoid(distGeodesic < 0.5*targetDist) = true;
+%         distGeodesicOld = distGeodesic;
     end
     
 

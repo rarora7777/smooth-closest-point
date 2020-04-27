@@ -33,6 +33,8 @@ function [ER, VS, T] = embedMeshAndSpace(V, F, V1, F1, V2, F2, n, d, holePos)
     Fin = [F; F2+size(V, 1)];
     Vout = [V; V1];
     Fout = [F(:, [2 1 3]); F1+size(V, 1)];
+    
+    disp('Computing tet meshes...');
 
     [VS1, T1] = tetgen(Vout, Fout, 'Flags',sprintf('-Yq1.2a%0.17f',16*avgedge(Vout,Fout)^3/(6*sqrt(2))), 'Holes',holePos);
 
@@ -48,22 +50,34 @@ function [ER, VS, T] = embedMeshAndSpace(V, F, V1, F1, V2, F2, n, d, holePos)
     T2temp = T2;
     T2temp(T2 > size(V, 1)) = T2temp(T2 > size(V, 1)) + (size(VS1, 1) - size(V, 1));
     T = [T1; T2temp];
+    
+    disp('Done!');
+    disp('Decimating...');
 
     %% Simplify
     [~, ~, M] = decimator(V, F, n, 'normaldeviation');
     D = zeros(length(M), size(V, 1));
 
+    disp('Done!');
+    disp('Computing geodesic distances...');
+    
     %% Compute distances between the samples
     for i=1:length(M)
         D(i, :) = geodesicdistance(V, F, M(i));
     end
     D = D(:, M);
 
+    disp('Done!');
+    disp('Computing n-D embedding...');
+    
     %% Embed in n-d, while trying to preserve the distances between the samples
     D = (D + D') ./ 2;
     opts = statset('MaxIter', 2000);
     E  = mdscale(D, d, 'Criterion', 'metricstress', 'Weights', 1./D.^2, 'Options', opts);
 
+    disp('Done!');
+    disp('Interpolating with LS-meshes...');
+    
     %% Interpolate with LS Meshes
     d = size(E, 2);
     EI = zeros(size(VS, 1), d);
@@ -74,4 +88,6 @@ function [ER, VS, T] = embedMeshAndSpace(V, F, V1, F1, V2, F2, n, d, holePos)
     else
         ER = lsmesheshard(VS, T, M, EI);
     end
+    
+    disp('Done!');
 end
