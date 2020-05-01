@@ -350,3 +350,5 @@ src/phong/*.obj
 lib/
 bin/
 *.asv
+
+data/*.json
