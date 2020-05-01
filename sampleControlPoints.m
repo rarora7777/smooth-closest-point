@@ -4,7 +4,7 @@ function [vIdx, fIdx, bary] = sampleControlPoints(V, F, numSample, targetDist, t
         warning('No random seed provided. Results cannot be replicated!');
         rng('shuffle');
     else
-        rng(randomSeed)
+        rng(randomSeed, 'twister')
     end
     
     s = rng;
