@@ -32,11 +32,17 @@ dlmwrite(anchors_path, [A(:,1)-1 A(:,2:end)], 'delimiter', ' ', 'precision', 12)
 weights_path   = [pwd '/t_W.txt'];%[tempname];
 dlmwrite(weights_path, W, 'delimiter', ' ', 'precision', 12);
 
+
 %% Call the WA binary
+path = mfilename('fullpath');
 if (isunix)
-    WA_binary = [pwd '/WA'];
+    path = split(path, '/');
+    path = join(path(1:end-1), '/');
+    WA_binary = [path{1} '/WA'];
 else
-    WA_binary = [pwd '/WA.exe'];
+    path = split(path, '\');
+    path = join(path(1:end-1), '/');
+    WA_binary = [path{1} '/WA.exe'];
 end
 command_string = [WA_binary ' f ' mesh_path ' ' anchors_path ' ' weights_path ' ' out_path];
 

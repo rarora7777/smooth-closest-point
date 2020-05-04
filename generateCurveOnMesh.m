@@ -21,7 +21,9 @@ function curve = generateCurveOnMesh(V, ER, F, numC, numKP, dist, angle, seed)
         'dist', dist, ...
         'angle', angle);
     
-    scatter3(P(curve.KPI, 1), P(curve.KPI, 2), P(curve.KPI, 3), 50, 'k', 'filled');
+    co = colororder;
+    scatter3(P(curve.KPI, 1), P(curve.KPI, 2), P(curve.KPI, 3), ...
+        50, co(1:numel(curve.KPI), :), 'filled');
     hold off;
     
 end

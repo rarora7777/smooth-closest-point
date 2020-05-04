@@ -15,7 +15,8 @@ function [vIdx, fIdx, bary] = sampleControlPoints(V, F, numSample, targetDist, t
     
     % normalize mesh size
     % targetDist is given w.r.t a size-normalized mesh
-    bboxSize = max(max(V) - min(V));
+    % NOTE: This was max(⋅) instead of norm(⋅) for the pilot
+    bboxSize = norm(max(V) - min(V));
     V = V/bboxSize;
     
     % targetTheta is given in degrees. Convert to radian.
@@ -46,10 +47,11 @@ function [vIdx, fIdx, bary] = sampleControlPoints(V, F, numSample, targetDist, t
     [f, b] = findPositionInFaces(F, vIdx(1));
     fIdx(1) = f;
     bary(1, :) = b;
-%     distGeodesicOld = inf(nV, 1);
     
     avoid = false(nV, 1);
     
+    actualDistGeodesic = zeros(numSample-1, 1);
+    actualDistGauss = zeros(numSample-1, 1);
     for i=2:numSample
         srcIdx = vIdx(i-1);
         source_points = {geodesic_create_surface_point('vertex', srcIdx, V(srcIdx, :))};
@@ -68,10 +70,11 @@ function [vIdx, fIdx, bary] = sampleControlPoints(V, F, numSample, targetDist, t
         fIdx(i) = f;
         bary(i, :) = b;
         avoid(distGeodesic < 0.5*targetDist) = true;
-%         distGeodesicOld = distGeodesic;
+        
+        actualDistGeodesic(i-1) = distGeodesic(minIdx);
+        actualDistGauss(i-1) = distGauss(minIdx) * 180/pi;
     end
     
-
     geodesic_delete;
 end
 
