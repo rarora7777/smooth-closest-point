@@ -1,6 +1,7 @@
 function kpi = computeKeypoints(V, F, curve, scale)
     n = 10;
     minLength = 0.03 / scale;   % 3 cm
+    maxLength = 0.15 / scale;   % 15 cm
     
 %     fIdx = curve.FI;
 %     bary = curve.B;
@@ -24,11 +25,11 @@ function kpi = computeKeypoints(V, F, curve, scale)
     
     [peakVal, candidates] = findpeaks(signal, 'MinPeakHeight', mean(signal));
     
-    midPt = 1+find(cumLen > L/2, 1);
-    kpi = [1; midPt; numel(gk)];
+%     midPt = 1+find(cumLen > L/2, 1);
+    kpi = [1; numel(gk)];
     
-    peakVal(candidates <= midPt) = [];
-    candidates(candidates <= midPt) = [];
+%     peakVal(candidates <= midPt) = [];
+%     candidates(candidates <= midPt) = [];
     
     % sort candidates by the peak values
     [~, idx] = sort(peakVal, 'descend');
@@ -57,6 +58,27 @@ function kpi = computeKeypoints(V, F, curve, scale)
     
 %     kpi = [1; kpi; numel(gk)];
     
+    kpi = sort(kpi)
+    while 1
+        lenDiff = diff(cumLen(kpi));
+        longSections = find(lenDiff > maxLength);
+        if numel(longSections)==0
+            break;
+        end
+        
+        newPtIdx = [];
+        for i=1:numel(longSections)
+            sectionLen = lenDiff(longSections(i));
+            numNewPts = floor(sectionLen / maxLength);
+            newPtLocs = cumLen(kpi(longSections(i))) + (1:numNewPts)/(numNewPts+1) * sectionLen;
+            n = numel(newPtLocs);
+            for j=1:n
+                newPtIdx(end+1) = find(cumLen > newPtLocs(j), 1);
+            end
+        end
+        kpi = sort([kpi; newPtIdx']);
+    end
+
     pts = getPoints(V, F, curve);
     
     [~, kpi] = pdist2(pts, P(kpi, :), 'squaredeuclidean', 'Smallest', 1);
