@@ -1192,6 +1192,52 @@ bool project(Phong* phong, const double *p, int fid_start, float *w)
 	return res;
 }
 
+bool projectBruteForce(Phong* phong, const double *p, float *w)
+{
+	Eigen::Matrix<ScalarType, 8, 1> _p;
+	_p(0) = p[0];
+	_p(1) = p[1];
+	_p(2) = p[2];
+	_p(3) = p[3];
+	_p(4) = p[4];
+	_p(5) = p[5];
+	_p(6) = p[6];
+	_p(7) = p[7];
+	
+	RowVector3 _w;
+	int fid;
+	bool res = phong->projectBruteForce(_p, fid, _w, true);
+	
+	w[0] = _w(0);
+	w[1] = _w(1);
+	w[2] = _w(2);
+	w[3] = (float)fid;
+	return res;
+}
+
+bool projectBruteForceEuclidean(Phong* phong, const double *p, float *w)
+{
+	Eigen::Matrix<ScalarType, 8, 1> _p;
+	_p(0) = p[0];
+	_p(1) = p[1];
+	_p(2) = p[2];
+	_p(3) = p[3];
+	_p(4) = p[4];
+	_p(5) = p[5];
+	_p(6) = p[6];
+	_p(7) = p[7];
+	
+	RowVector3 _w;
+	int fid;
+	bool res = phong->projectBruteForce(_p, fid, _w, false);
+	
+	w[0] = _w(0);
+	w[1] = _w(1);
+	w[2] = _w(2);
+	w[3] = (float)fid;
+	return res;
+}
+
 bool deletePhongObject(Phong *phong)
 {
 	delete phong;

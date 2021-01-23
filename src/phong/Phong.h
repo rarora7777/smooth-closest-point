@@ -202,6 +202,8 @@ extern "C"
 {
 	LIBRARY_API Phong* createPhongObject(double* V, const int nV, const int dim, unsigned int* F, const int nF);
 	LIBRARY_API bool project(Phong *phong, const double* p, int fid_start, float *w);
+	LIBRARY_API bool projectBruteForce(Phong* phong, const double *p, float *w);
+	LIBRARY_API bool projectBruteForceEuclidean(Phong* phong, const double *p, float *w);
 	LIBRARY_API bool deletePhongObject(Phong *phong);
 	LIBRARY_API double getInitTime(Phong *phong);
 }
