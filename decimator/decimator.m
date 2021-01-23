@@ -1,7 +1,7 @@
 function [ NV, NF, M ] = decimator(V,F,target,type)
   % DECIMATOR 
   %
-  % [ NV, NF, M ] = normals(V,F,target)
+  % [ NV, NF, M ] = decimator(V,F,target, type)
   %
   % Decimate the mesh using quadric error metric to the number of vertices
   % specified by target
@@ -9,10 +9,11 @@ function [ NV, NF, M ] = decimator(V,F,target,type)
   % Inputs:
   %  V        #V x 3  matrix of vertex coordinates
   %  F        #F x 3  matrix of indices of triangle corners
-  %  target   1x1 number of vertices in the target mesh
+  %  target   1x1 number of vertices in the target mesh (default: |V|/2)
   %  type     ['quadric': quadric edge collapse priority,
-  %            'edgelenght': edge lenght priority,
+  %            'edgelength': edge length priority,
   %            'normaldeviation': normal deviation priority]
+  %             (default: 'quadric')
   %
   % Output:
   %  NV       target x 3 matrix of vertex coordinates
