@@ -38,6 +38,8 @@ For pre-processing (compute and embed shell tet mesh), the main point of entry i
 - [Optional, but recommended] Use TetWild to improve mesh quality of the offset surfaces `./data/bunny_out_cgal.obj` and `./data/bunny_in_cgal.obj`. For objects that are thin everywhere, the inner offset surface may be absent. Please ensure that the TetWild-processed surfaces are located at `./data/bunny_out.obj` and `./data/bunny_in.obj` (if inner surface exists).
 - In MATLAB, run `computeAndSaveEmbedding(bunny, 1000)`. This may take a while. Higher the value of the second parameter, better the embedding quality but higher the runtime for this step. The triangle and tetrahedral meshes are created in a simple text format at `./data/bunny_tri.txt` and `./data/bunny_tet.txt`. Use `readMesh('./data/bunny_tri.txt', 3, 8)` and `readMesh('./data/bunny_tet.txt', 4, 8)` to read and view these meshes, if required.
 
+Note that the main technical component is `embedMeshAndSpace.m`. The rest is boilerplate code.
+
 
 ## Runtime
 
