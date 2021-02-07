@@ -32,6 +32,7 @@ cmake --build .
 ## Pre-processing
 For pre-processing (compute and embed shell tet mesh), the main point of entry is `computeAndSaveOffsetSurfaces` followed by `computeAndSaveEmbedding`.
 
+- Add the following to the MATLAB path: `./`, `./matlab/`, and `./decimator/`.
 - Download a manifold triangle mesh in Wavefront OBJ format to `./data/`. Let's call it `bunny.obj`.
 - In MATLAB, run `computeAndSaveEmbedding(bunny)`.
 - [Optional, but recommended] Use TetWild to improve mesh quality of the offset surfaces `./data/bunny_out_cgal.obj` and `./data/bunny_in_cgal.obj`. For objects that are thin everywhere, the inner offset surface may be absent. Please ensure that the TetWild-processed surfaces are located at `./data/bunny_out.obj` and `./data/bunny_in.obj` (if inner surface exists).
