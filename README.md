@@ -51,6 +51,12 @@ Call functions in `Phong.dll` (`Phong.so`/`Phong.dylib` on Linux/MacOS). Typical
 
 Please see `src/phong/Phong.h` for details. The exported functions are at the bottom of the file in an `extern "C"` block.
 
+## Other uses (not well-documented yet)
+
+- Create splines on a triangle mesh using `splineOnSurface`. Add `./bspline/` to MATLAB path to use this.
+- Generate a smooth curve on a triangle mesh with a prescribed target complexity (length of curve and length of Gauss map) using `generateCurveOnMesh`. Requires [geodesic_matlab](https://github.com/rarora7777/geodesic_matlab).
+- For a curve on the mesh, compute "keypoints" on it using `computeKeypoints`. These keypoints lie at curvature extrema and are generally well-spaced (not too close or too far from each other).
+
 
 # License
 
