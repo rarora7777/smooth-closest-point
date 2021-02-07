@@ -4,7 +4,11 @@
 #ifdef NO_LIBRARY_EXPORTS
 #    define LIBRARY_API
 #else
-#    define LIBRARY_API __declspec(dllexport)
+	#ifdef _MSC_VER
+		#define LIBRARY_API __declspec(dllexport)
+	#else
+		#define LIBRARY_API __attribute__((visibility("default")))
+	#endif
 #endif
 
 #include <assert.h>
@@ -200,11 +204,58 @@ public:
 
 extern "C"
 {
+	/*
+	Initialize Phong projection for a triangle mesh (V, F)
+	V: vertices [v11, ... v1n, v21, ... v2n, ..., v81, ... v8n]
+	nV: number of vertices (n above)
+	dim: dimension of Euclidean space in which V is embedded (must be 8)
+	F: faces [F11, ..., F1m, F21, ..., F2m, F31, ..., F3m]
+	nF: number of faces (m above)
+	*/
 	LIBRARY_API Phong* createPhongObject(double* V, const int nV, const int dim, unsigned int* F, const int nF);
+	
+	/*
+	Project a point onto the triangle mesh. Returns the implicit coordinate (triangle index, barycentric coordinate) of the projection.
+	phong: Pointer to a Phong object (typically returned by createPhongObject)
+	p: point in dim-dimensional space [p1, ... p8]
+	fid_start: index of face to start from.
+	w: output variable: w[0]: face_index, (w[1], w[2], w[3]): barycentric 
+	coordinate.
+	*/
 	LIBRARY_API bool project(Phong *phong, const double* p, int fid_start, float *w);
+	
+	/*
+	Project a point onto the triangle mesh. Returns the implicit coordinate (triangle index, barycentric coordinate) of the projection.
+	project() uses a short cut: starting from fid_start, find the first triangle
+	in breadth-first order which returns a valid Phong projection for the input
+	point. In contract, phongBruteForce() computes the Phong projection for each
+	triangle, and returns the valid project that is nearest to the input point.
+	projectBruteForce() can be more accurate than project() but slower.
+	phong: Pointer to a Phong object (typically returned by createPhongObject)
+	p: point in dim-dimensional space [p1, ... p8]
+	w: output variable: w[0]: face_index, (w[1], w[2], w[3]): barycentric
+	coordinate.
+	*/
 	LIBRARY_API bool projectBruteForce(Phong* phong, const double *p, float *w);
+	
+	/* 
+	Returns the Euclidean (closest-point) projection on the mesh.
+	phong: Pointer to a Phong object (typically returned by createPhongObject)
+	p: point in dim-dimensional space [p1, ... p8]
+	w: output variable: w[0]: face_index, (w[1], w[2], w[3]): barycentric coordinate.
+	*/
 	LIBRARY_API bool projectBruteForceEuclidean(Phong* phong, const double *p, float *w);
+	
+	/* 
+	Deletes the Phong object.
+	phong: Pointer to a Phong object (typically returned by createPhongObject)
+	*/
 	LIBRARY_API bool deletePhongObject(Phong *phong);
+	
+	/* 
+	Returns the amount of time required to create the Phong object (in seconds).
+	phong: Pointer to a Phong object (typically returned by createPhongObject)
+	*/
 	LIBRARY_API double getInitTime(Phong *phong);
 }
 #endif

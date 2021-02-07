@@ -1,24 +1,57 @@
-# Compilation
+Code to compute offset-surfaces around a manifold triangle mesh, tetrahedral mesh the space between the inner and outer offset surfaces (the _shell_), and embed the tetrahedral mesh in a higher-dimensional space. This higher-dimensional embedding can then be used for smooth closest-point queries for object within the shell.
 
-Before computing the Euclidean projection using the MATLAB code, first compile decimator using VS 2017 or VS 2019.
+Based on [Panozzo et al. 2013], see below.
 
-Dependency: OpenMesh 7.1
+# Build Instructions
 
-```
-cd decimator
-cl /O2 decimator.cc /I $env:OPENMESH_ROOT/include /link /LIBPATH:$env:OPENMESH_ROOT/lib OpenMeshCore.lib OpenMeshTools.lib
-```
+Dependencies: [OpenMesh](https://www.graphics.rwth-aachen.de/software/openmesh/download/) (7.1 or higher), [Eigen3](http://eigen.tuxfamily.org/index.php?title=Main_Page), [libigl](https://github.com/libigl/libigl/). [TetWild](https://github.com/Yixin-Hu/TetWild) is also recommended, but is not required for building the application.
 
-Compile Phong projection code to a dynamic library (DLL) using VS 2017 or VS 2019.
+Please modify the paths below based on your machine. `LIBIGL_DIR` should point to the libigl root folder and `Eigen3_DIR` should point to the folder containing `Eigen3Config.cmake`.
 
-Dependencies: LibIGL and Eigen3
+## Windows
 
 ```
-cd src/phong
-cl /O2 /LD Phong.cpp Trianglephong.cpp /I "../utils" /I ".." /I $env:EIGEN3_ROOT /I $env:LIBIGL_ROOT/include
+mkdir build
+cd build
+cmake .. -DLIBIGL_DIR="D:/dev/libigl" -DEigen3_DIR="D:/dev/eigen3/build"
+cmake --build . --config Release
 ```
 
-If using command prompt instead of PowerShell, replace `$env:blah` with `"%blah%"`, with quotes.
+## Linux/MacOS
+
+```
+mkdir build
+cd build
+cmake .. -DLIBIGL_DIR="/usr/local/libigl" -DEigen3_DIR="/usr/local/eigen3/build" -DCMAKE_BUILD_TYPE=Release
+cmake --build .
+```
+
+# Usage
+
+
+## Pre-processing
+For pre-processing (compute and embed shell tet mesh), the main point of entry is `computeAndSaveOffsetSurfaces` followed by `computeAndSaveEmbedding`.
+
+- Download a manifold triangle mesh in Wavefront OBJ format to `./data/`. Let's call it `bunny.obj`.
+- In MATLAB, run `computeAndSaveEmbedding(bunny)`.
+- [Optional, but recommended] Use TetWild to improve mesh quality of the offset surfaces `./data/bunny_out_cgal.obj` and `./data/bunny_in_cgal.obj`. For objects that are thin everywhere, the inner offset surface may be absent. Please ensure that the TetWild-processed surfaces are located at `./data/bunny_out.obj` and `./data/bunny_in.obj` (if inner surface exists).
+- In MATLAB, run `computeAndSaveEmbedding(bunny)`. This may take a while. The triangle and tetrahedral meshes are created in a simple text format at `./data/bunny_tri.txt` and `./data/bunny_tet.txt`. Use `readMesh('./data/bunny_tri.txt', 3, 8)` and `readMesh('./data/bunny_tet.txt', 4, 8)` to read and view these meshes, if required.
+
+
+## Runtime
+
+Call functions in `Phong.dll` (`Phong.so`/`Phong.dylib` on Linux/MacOS). Typical usage:
+
+- Create a `Phong` object using `createPhongObject()`.
+- For every point that needs to be projected, call `project()` or `projectBruteForce()`.
+- Delete the `Phong` object using `deletePhongObject()`.
+
+Please see `src/phong/Phong.h` for details. The exported functions are at the bottom of the file in an `extern "C"` block.
+
+
+# License
+
+In accordance with the license associated with Panozzo et al.'s original repo, this code is free to use for non-commercial applications, including my changes and additions.
 
 
 # Stuff from Panozzo et al.'s original repo
@@ -28,8 +61,7 @@ Reference implementation for the paper Weighted Averages on Surfaces
 Daniele Panozzo, Ilya Baran, Olga Diamanti, Olga Sorkine
 SIGGRAPH 2013
 
-This code is free to use for non-commercial applications, please
-cite our paper if you use it in your project.
+This code is free to use for non-commercial applications, please cite our paper if you use it in your project.
 
 @article{Panozzo:WA:2013,
 author = {Daniele Panozzo and Ilya Baran and Olga Diamanti and Olga Sorkine-Hornung},

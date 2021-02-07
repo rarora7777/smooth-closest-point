@@ -352,3 +352,5 @@ bin/
 *.asv
 
 data/*.json
+
+build/*
