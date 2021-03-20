@@ -1,6 +1,6 @@
 Code to compute offset-surfaces around a manifold triangle mesh, tetrahedral mesh the space between the inner and outer offset surfaces (the _shell_), and embed the tetrahedral mesh in a higher-dimensional space. This higher-dimensional embedding can then be used for smooth closest-point queries for object within the shell.
 
-Based on [Panozzo et al. 2013], see below.
+Adapted from [Panozzo et al. 2013], see below.
 
 # Build Instructions
 
