@@ -37,7 +37,7 @@ function kpi = computeKeypoints(V, F, curve, scale)
     end
     
 
-    kpi = sort(kpi)
+    kpi = sort(kpi);
     while 1
         lenDiff = diff(cumLen(kpi));
         longSections = find(lenDiff > maxLength);
